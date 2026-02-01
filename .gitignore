@@ -1,0 +1,14 @@
+.env
+env
+
+# backend ignores
+venv
+
+# frontend ignores
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Others
+.vscode/
+.DS_Store/

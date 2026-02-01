@@ -1,0 +1,2 @@
+# Nothing here yet but thinking of making the api in its own local container as well as elastic search helps for dev
+# probably leaving the frontend to run via npm
