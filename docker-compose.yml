@@ -1,2 +1,28 @@
 # Nothing here yet but thinking of making the api in its own local container as well as elastic search helps for dev
 # probably leaving the frontend to run via npm
+
+services:
+  api:
+    build:
+      context: ./backend
+    container_name: backend_api
+    ports:
+      - "8000:8000"
+    volumes:
+      # for reloads
+      - ./backend:/app
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elastic_search
+
+  elastic_search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.11
+    container_name: elastic_search
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
+volumes:
+  es_data:
