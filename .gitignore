@@ -12,3 +12,4 @@ frontend/.env
 # Others
 .vscode/
 .DS_Store/
+backend/app/__pycache__
