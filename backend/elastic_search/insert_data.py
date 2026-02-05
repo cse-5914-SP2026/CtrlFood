@@ -15,7 +15,10 @@ menu_items = []
 for day in data.get("days"):
     date = day.get("date")
     for item in day.get("menu_items"):
-        food_name = item["food"].get("name")
+        if not item["food"]:
+            food_name=None
+        else:
+            food_name = item["food"].get("name")
         menu_items.append({
             "name": food_name,
             "date": date,
