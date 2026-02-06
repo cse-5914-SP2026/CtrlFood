@@ -12,4 +12,5 @@ frontend/.env
 # Others
 .vscode/
 .DS_Store/
-backend/app/__pycache__
+__pycache__/
+Notes.txt
