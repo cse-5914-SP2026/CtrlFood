@@ -16,7 +16,7 @@ for day in data.get("days"):
     date = day.get("date")
     for item in day.get("menu_items"):
         if not item["food"]:
-            food_name=" "
+            food_name=None
         else:
             food_name = item["food"].get("name")
         menu_items.append({
@@ -32,7 +32,7 @@ for item in menu_items:
     bulk_data += json.dumps(item) + "\n"
 
 # Send to Elasticsearch
-es_url = "http://localhost:9200/_bulk"
+es_url = "http://elastic_search:9200/_bulk"
 headers = {"Content-Type": "application/json"}
 res = requests.post(es_url, headers=headers, data=bulk_data.encode("utf-8"))
 
