@@ -15,6 +15,17 @@ If that works then try `docker-compose up`
 Other useful commands: `docker ps` --- shows the containers running
 `docker-compose up --build` will build the docker files
 `docker-compose down` makes the containers stop running
+`docker volume ls` lists the volumes made by docker
+`docker compose down -v` removes containers and destroy associated volumes
+
+FastAPI built in docs at: http://localhost:8000/docs
+Kibana docs for elasticsearch at: http://localhost:5601
+
+## Notes About Local Dev:
+
+The FastAPI files are mounted to the container thus changes you make on local machine will reflect in the container and it will automatically restart the server with your new changes (only for changes in the backend folder)
+
+Local instance of Elastic search has a persistent volume managed by Docker so if you save data this one time and you dont delete the image then next time es will load in all of that data. Refer to the useful command section for how to manage the es_data storage.
 
 FastAPI built in docs at: http://localhost:8000/docs
 Kibana docs for elasticsearch at: http://localhost:5601
