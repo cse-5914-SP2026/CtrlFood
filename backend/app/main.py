@@ -24,7 +24,7 @@ def read_root():
     return {"message": "Ctrl F ood!"}
 
 @app.post("/query", response_model=List[Dict[str, Any]])
-def read_root(user_query: UserQuery):
+def test_query(user_query: UserQuery):
     '''
     mvp function.
 
