@@ -1,0 +1,189 @@
+// custom manual schema mabye right maybe wrong just be inspecting the response from the api
+
+// important part is ROOT is such week HAS DAYS each DAY has MENUITEMs each MENUITEM has a possible field called food
+root :
+{ 
+    !start_date: date // goes by weekly
+    !menu_type_id:
+    ?id: number/string
+    ?last_updated: boolean
+    ?published: boolean
+    ?display_name: string
+
+    !(r)days: [*entry] // list of entry
+}
+
+entry :
+{
+    !date:
+    !has_unpublished_menus: boolean
+    ?menu_info: *menuInfo
+
+    !menu_items: [*menuItem]
+}
+
+menuItem :
+{
+    !id: number
+    ?date: date/null
+    !position: number
+    !is_section_title: boolean
+    !bold: boolean
+    !featured: boolean
+    !text: string
+    !no_line_break: boolean
+    !blank_line: boolean
+    ?food: *food
+    !is_holiday: boolean
+    ?food_list: null
+    !station_id: number
+    !is_station_header: boolean
+    !station_is_collapsible: boolean
+    !station_image_display_mode: string
+    ?station_logo: string
+    ?station_logo_alt: string
+    ?station_mobile_image: string
+    ?station_mobile_image_alt: string
+    ?image: string
+    ?image_description: string
+    ?image_alt: string
+    ?image_thumbnail: string
+    !category: string
+    ?price: number/null
+    ?serving_size: string
+    ?serving_size_amount: number
+    ?serving_size_unit: string
+    ?smart_recipe_id: number
+    !station_food_tags: [*string]
+    !menu_id: number
+    ?food_variation_id: number
+}
+
+food :
+{
+    !id: number
+    !name: string
+    !description: string
+    ?image_url: string
+    ?image_alt_text: string
+    ?hoverpic_url: string
+    !price: number
+    !food_category: string
+    ?food_highlight_message: string
+    !file_url: string
+    !download_label: string
+    ?rounded_nutrition_info: *roundedNutritionInfo
+    ?serving_size_info: *servingSizeInfo
+    !has_nutrition_info: boolean
+    ?icons: *iconCollection
+    !icons_approved: boolean
+    ?aggregated_data: *aggregatedData
+    !food_sizes: [*any]
+    !ds_calories_override: string
+    !synced_id: string
+    ?sync_placeholder: null
+    !has_options_or_sides: boolean
+    !digest: string
+    !pos_item_id: string
+    ?smart_recipe_id: number
+    !has_subfoods: boolean
+    ?meal_plan_price: number
+    !use_custom_sizes: boolean
+    !tags: [*string]
+    !synced_subtext: string
+    !synced_ingredients: string
+    !synced_nested_foods: [*any]
+    !synced_ordering_enabled: boolean
+    !subtext: string
+    !subtext_unlocked: boolean
+    !ingredients: string
+    !ingredients_unlocked: boolean
+    !nested_foods: [*any]
+    !nested_foods_unlocked: boolean
+    !ordering_enabled: boolean
+    !ordering_enabled_unlocked: boolean
+}
+
+roundedNutritionInfo :
+{
+    ?calories: number
+    ?g_fat: number
+    ?g_saturated_fat: number
+    ?g_trans_fat: number
+    ?mg_cholesterol: number
+    ?g_carbs: number
+    ?g_added_sugar: number
+    ?g_sugar: number
+    ?mg_potassium: number
+    ?mg_sodium: number
+    ?g_fiber: number
+    ?g_protein: number
+    ?mg_iron: number
+    ?mg_calcium: number
+    ?mg_vitamin_c: number
+    ?iu_vitamin_a: number/null
+    ?re_vitamin_a: number/null
+    ?mcg_vitamin_a: number
+    ?mg_vitamin_d: number/null
+    ?mcg_vitamin_d: number
+}
+
+servingSizeInfo :
+{
+    ?serving_size_amount: string
+    ?serving_size_unit: string
+}
+
+iconCollection :
+{
+    !(r)food_icons: [*foodIcon]
+    !myplate_icons: [*any]
+}
+
+foodIcon :
+{
+    !id: number
+    !synced_name: string
+    !enabled: boolean
+    !spotlight_enabled: boolean
+    !sprite: *sprite
+    ?custom_icon_url: string
+    ?custom_icon: string
+    ?custom_spotlight_icon_url: string
+    ?custom_spotlight_icon: string
+    !type: number
+    !behavior: number
+    !is_filter: boolean
+    !is_highlight: boolean
+    !is_digital_signage_only: boolean
+    !slug: string
+    !icon_slug: string
+    ?spotlight_icon_slug: string
+    !name: string
+    !_synced_name: string
+    ?help_text: string
+    !sort_order: number
+    !_enabled: boolean
+    !food_icon_group: number
+}
+
+sprite :
+{
+    !slug: string
+    !name: string
+    ?help_text: string
+    !class_name: string
+}
+
+aggregatedData :
+{
+    !price_adjustment: number
+    !icons_approved: boolean
+    !food_icons: [*any]
+    !calories: number
+}
+
+menuInfo :
+{
+    // Useless stuff
+}
