@@ -1,4 +1,6 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
 from pydantic import ValidationError
 from requests.exceptions import JSONDecodeError, RequestException
 from elasticsearch import Elasticsearch
@@ -18,6 +20,19 @@ ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL", "http://elastic_search:9200")
 es_client = Elasticsearch([ELASTICSEARCH_URL])
 
 app = FastAPI()
+
+origins = [ # only localhost links so for development cors doesnt complain
+    "http://localhost:5173", # believe vite runs on this
+    "http://127.0.0.1:5173" 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods = ["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
