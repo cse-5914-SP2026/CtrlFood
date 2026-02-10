@@ -78,6 +78,7 @@ def test_insert():
                         "name": menu_item.food.name,
                         "date": day.date,
                         "description": menu_item.food.description or "",
+                        "location": NUTRISLICE_URLS[i].split("/")[7],
                     })
 
         lines = []
