@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import date
 
 from pydantic import ValidationError
 from requests.exceptions import JSONDecodeError, RequestException
@@ -12,7 +13,7 @@ import os
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
-from .constants import NUTRISLICE_URLS
+from .nutrislice_urls import nutrislice_urls_today
 from .utility import make_es_search
 
 # ES docker url should be injected to the api container's env var
@@ -68,9 +69,29 @@ def test_insert():
     but the below is not thread safe and I am not sure about the safety of the functions. (If doing this will need to modularize teh route)
 
     '''
-    for i in range(len(NUTRISLICE_URLS)):
+    
+    today = date.today().isoformat() 
+    
+    es_client.delete_by_query(
+        index="foods",
+        body={
+            "query": {
+                "bool": {
+                    "must_not": [
+                        {"term": {"date": today}}
+                    ]
+                }
+            }
+        },
+        refresh=True,
+        conflicts="proceed",
+    )
+     
+    nutrislice_urls=nutrislice_urls_today()
+    
+    for i in range(len(nutrislice_urls)):
 
-        api_url = NUTRISLICE_URLS[i]
+        api_url = nutrislice_urls[i]
 
         try:
             response = requests.get(api_url)
@@ -87,13 +108,15 @@ def test_insert():
 
         food_list = []
         for day in root.days or []:
+            if day.date != today:
+                continue
             for menu_item in day.menu_items or []:
                 if menu_item.food and menu_item.food.name: # if there is no name assume it is not a food item dont include
                     food_list.append({
                         "name": menu_item.food.name,
                         "date": day.date,
                         "description": menu_item.food.description or "",
-                        "location": NUTRISLICE_URLS[i].split("/")[7],
+                        "location": nutrislice_urls[i].split("/")[7],
                     })
 
         lines = []
