@@ -1,6 +1,6 @@
 import "./App.css";
 import { SearchBox } from "./components/SearchBox";
-import { FoodResultCard } from "./components/FoodResultCard";
+import { FoodResultCard } from "./components/Foodresultcard";
 import * as React from "react";
 
 function App() {
