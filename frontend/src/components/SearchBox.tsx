@@ -9,7 +9,7 @@ type SearchBoxProps = {
 export function SearchBox({ onSearch }: SearchBoxProps) {
   const [query, setQuery] = React.useState("");
 
-  const submit = () => {
+  const submit = async () => {
     const q = query.trim();
     if (!q) return;
     onSearch?.(q);
@@ -19,10 +19,12 @@ export function SearchBox({ onSearch }: SearchBoxProps) {
     <div className="w-full">
       <div className="flex w-full items-center gap-3 rounded-2xl border bg-white p-3 shadow-md">
         <Input
-          className="flex-1 h-14 text-lg border-none shadow-none focus-visible:ring-0"
+          className="h-14 text-lg border-none shadow-none focus-visible:ring-0"
           placeholder="Search a dish… (ramen, tacos, boba)"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+          }}
           onKeyDown={(e) => e.key === "Enter" && submit()}
         />
         <Button className="h-14 px-8 text-lg rounded-xl" onClick={submit}>
