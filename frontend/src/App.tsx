@@ -76,9 +76,13 @@ import { SearchBar } from "./components/SearchBar";
 import LeftBar from "./components/left-bar";
 import { DatePicker } from "./components/date-picker";
 import { Calendar } from "./components/ui/calendar";
+import QueryList from "./components/query-list";
+import { queryStore } from "./store/store";
 
 function App() {
   const [foodResult, setFoodResult] = React.useState<string | null>(null);
+
+  const updateCurrentQueryList = queryStore((state) => state.populateBackendQueryList)
 
   const handleSearch = async (q: string) => {
     const res = await fetch("http://localhost:8000/query", {
@@ -97,6 +101,8 @@ function App() {
     setFoodResult(
       data ? ` Found: ${JSON.stringify(data)}` : " No results found.",
     );
+
+    updateCurrentQueryList(data) // set new to global store
   };
 
   return (
@@ -108,6 +114,7 @@ function App() {
         <SearchBar onSearch={handleSearch}></SearchBar>
         <LeftBar></LeftBar>
         <DatePicker></DatePicker>
+        <QueryList></QueryList>
         {/* <Calendar
           mode="single"
           className="rounded-lg border"

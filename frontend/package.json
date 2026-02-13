@@ -24,8 +24,11 @@
     "react-day-picker": "^9.13.2",
     "react-dom": "^19.2.0",
     "react-leaflet": "^5.0.0",
+    "react-virtualized": "^9.22.6",
+    "react-window": "^2.2.6",
     "tailwind-merge": "^3.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

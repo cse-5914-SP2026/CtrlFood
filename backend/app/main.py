@@ -50,11 +50,16 @@ def test_query(user_query: UserQuery):
     q = make_es_search(user_query.query)
 
     try:
-        resp = es_client.search(index="foods", body=q)
+        resp = es_client.search(index="foods", size=200, body=q)
     except TransportError as e:
         raise HTTPException(status_code=500, detail=f"Es client error when searching: {e}")
 
-    return resp["hits"]["hits"]
+    print(resp)
+
+    hits = resp["hits"]["hits"]
+
+    temp_cleaned = [ hit["_source"] for hit in hits]
+    return temp_cleaned
 
 @app.get("/insert")
 def test_insert():

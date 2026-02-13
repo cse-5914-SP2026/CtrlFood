@@ -10,7 +10,18 @@ import 'leaflet/dist/leaflet.css';
 
     > <Marker> places a pin on the map
 
+    > useMap is importnat hook 
+            since MapContainer prop immutable and if you need to change its props or control it after mount
+            then you need to use useMap(). It returns a L.map isntance
+            It must be called froma component that isa child of MapContainer
+        
+            also react can have renderless components which can act as a comp to hook 
+            the leaflet react thing will need this heavily
+            
+    > Also there is useMapEvents
 
+
+    > Custom marker icons will need to import L from 'leaflet' then L.icon give it the icon
 
 
 
