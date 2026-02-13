@@ -17,20 +17,24 @@ export function SearchBar({ onSearch }: SearchBoxProps) {
     };
 
     return (
-        <div className="absolute top-5 left-20 z-[1000] p-1 rounded-xl">
-            <div className="flex items-center w-full max-w-sm rounded-full border border-input bg-background px-1 shadow-sm focus-within:ring-1 focus-within:ring-ring">                <Input
-                className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent"
+        <div className="absolute top-4 left-20 z-[1000] w-full max-w-sm p-1 flex items-center gap-2">
+
+            <Input
+                className="flex-1 h-11 rounded-full border-none bg-white text-slate-900 shadow-md placeholder:text-slate-400 px-5 focus-visible:ring-2 focus-visible:ring-blue-100"
                 placeholder="Search CtrlF(ood)"
                 value={query}
-                onChange={(e) => {
-                    setQuery(e.target.value);
-                }}
+                onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && submit()}
             />
-                <Button variant="ghost" size="icon" className="h-8 px-4 text-sm rounded-xl" onClick={submit}>
-                    <Search className="h-4 w-4 text-blue-400" />
-                </Button>
-            </div>
-        </div >
+
+            <Button
+                size="icon"
+                className="h-11 w-11 shrink-0 rounded-full bg-white hover:bg-slate-300 text-blue-500 shadow-md"
+                onClick={submit}
+            >
+                <Search className="h-5 w-5" />
+            </Button>
+
+        </div>
     );
 }

@@ -12,8 +12,7 @@ import {
 
 export function CategoryIslands() {
     return (
-        // Scrollable container
-        <div className="absolute top-5 left-120 z-[1000] flex items-center py-2">
+        <div className="absolute top-5 left-180 z-[1000] flex items-center py-2">
 
             <div className="flex gap-2 px-1">
                 <Button
@@ -21,7 +20,7 @@ export function CategoryIslands() {
                     className="h-7 rounded-full px-4 bg-white border-slate-200 text-slate-700 shadow-sm hover:bg-stone-500"
                 >
                     <UtensilsIcon className="w-4 h-4 mr-2" />
-                    Restaurants
+                    Test1
                 </Button>
 
                 <Button
@@ -29,7 +28,7 @@ export function CategoryIslands() {
                     className="h-7 rounded-full px-4 bg-white border-slate-200 text-slate-700 shadow-sm hover:bg-stone-500"
                 >
                     <ArchiveIcon className="w-4 h-4 mr-2" />
-                    Archive
+                    Test1
                 </Button>
 
                 <Button
@@ -37,7 +36,7 @@ export function CategoryIslands() {
                     className="h-7 rounded-full px-4 bg-white border-slate-200 text-slate-700 shadow-sm hover:bg-stone-500"
                 >
                     <FlagIcon className="w-4 h-4 mr-2" />
-                    Report
+                    Test1
                 </Button>
 
                 <Button
@@ -45,7 +44,7 @@ export function CategoryIslands() {
                     className="h-7 rounded-full px-4 bg-white border-slate-200 text-slate-700 shadow-sm hover:bg-stone-500"
                 >
                     <ClockIcon className="w-4 h-4 mr-2" />
-                    Snooze
+                    Test1
                 </Button>
             </div>
         </div>
