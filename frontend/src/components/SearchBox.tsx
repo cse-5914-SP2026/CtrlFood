@@ -16,10 +16,10 @@ export function SearchBox({ onSearch }: SearchBoxProps) {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex w-full items-center gap-3 rounded-2xl border bg-white p-3 shadow-md">
+    <div className="absolute top-5 left-20 z-[1000] p-1 rounded-xl">
+      <div className="flex w-full items-center gap-3 rounded-2x1">
         <Input
-          className="h-14 text-lg border-none shadow-none focus-visible:ring-0"
+          className="bg-white dark:bg-slate-950"
           placeholder="Search a dish… (ramen, tacos, boba)"
           value={query}
           onChange={(e) => {
@@ -27,14 +27,14 @@ export function SearchBox({ onSearch }: SearchBoxProps) {
           }}
           onKeyDown={(e) => e.key === "Enter" && submit()}
         />
-        <Button className="h-14 px-8 text-lg rounded-xl" onClick={submit}>
+        <Button className="h-8 px-8 text-sm rounded-xl" onClick={submit}>
           Find Food
         </Button>
       </div>
 
-      <p className="mt-3 text-sm text-muted-foreground text-center">
+      {/* <p className="mt-3 text-sm text-muted-foreground text-center">
         Press Enter to search.
-      </p>
-    </div>
+      </p> */}
+    </div >
   );
 }
