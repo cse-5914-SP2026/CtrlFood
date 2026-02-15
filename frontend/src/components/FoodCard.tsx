@@ -17,6 +17,7 @@ const FoodCard = ({ item }: Props) => {
                 <div className='flex flex-col'>
                     <p>{item.name}</p>
                     <p>{item.date}</p>
+                    <p>{item.location}</p>
                 </div>
             </CardContent>
         </Card>

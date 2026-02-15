@@ -15,23 +15,6 @@ const LeftBar = () => {
                     <Menu className="w-6 h-6" />
                 </button>
             </div>
-
-            <nav className="flex flex-col gap-4 w-full items-center">
-
-                <button className="p-3 rounded-full transition-colors bg-blue-100 text-blue-700">
-                    <Home className="w-6 h-6" />
-                </button>
-
-                <button className="p-3 rounded-full transition-colors text-gray-600 hover:bg-gray-100">
-                    <Map className="w-6 h-6" />
-                </button>
-            </nav>
-
-            <div className="mt-auto flex flex-col gap-4 w-full items-center">
-                <button className="p-3 rounded-full transition-colors text-gray-600 hover:bg-gray-100">
-                    <HelpCircle className="w-6 h-6" />
-                </button>
-            </div>
         </div>
     )
 }

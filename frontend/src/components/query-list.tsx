@@ -57,7 +57,7 @@ const QueryList = () => {
                     <List
                         rowComponent={RowComponent}
                         rowCount={currentQueryList.length}
-                        rowHeight={80}
+                        rowHeight={110}
                         rowProps={{ items: currentQueryList }}
                     />
                 </CardContent>

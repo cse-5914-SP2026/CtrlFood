@@ -13,7 +13,7 @@ import random
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
-from .constants import NUTRISLICE_URLS
+from .constants import NUTRISLICE_URLS, location_coordinates
 from .utility import make_es_search
 
 # ES docker url should be injected to the api container's env var
@@ -95,14 +95,15 @@ def test_insert():
         for day in root.days or []:
             for menu_item in day.menu_items or []:
                 if menu_item.food and menu_item.food.name: # if there is no name assume it is not a food item dont include
+                    temp_coor = location_coordinates.get(NUTRISLICE_URLS[i].split("/")[7], [40.0017, -83.0160])
                     food_list.append({
                         "name": menu_item.food.name,
                         "date": day.date,
-                        "description": menu_item.food.description or "",
+                        "description": menu_item.food.description or "No Description",
                         "location": NUTRISLICE_URLS[i].split("/")[7],
                         "coordinates": {
-                            "lat": round(random.uniform(-90, 90), 6),
-                            "lng": round(random.uniform(-180, 180), 6),
+                            "lat": temp_coor[0],
+                            "lng": temp_coor[1],
                         },
                     })
 
