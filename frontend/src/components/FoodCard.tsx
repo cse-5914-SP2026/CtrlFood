@@ -12,7 +12,7 @@ const FoodCard = ({ item }: Props) => {
     const setCurrentSelectedFoodItem = currentSelectedStore((state) => state.setSelectedFoodItem)
 
     return (
-        <Card className="bg-stone-500 mx-auto w-full max-w-sm" onClick={() => setCurrentSelectedFoodItem(item)}>
+        <Card className="bg-stone-500 mx-auto w-full max-w-sm hover:bg-accent hover:border-primary/50 cursor-pointer" onClick={() => setCurrentSelectedFoodItem(item)}>
             <CardContent>
                 <div className='flex flex-col'>
                     <p>{item.name}</p>

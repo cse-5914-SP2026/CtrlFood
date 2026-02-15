@@ -42,6 +42,9 @@ import { useEffect } from 'react';
 
 */
 
+// bc of the weird ass rule of MapContainer make this UI less comp hook onto the global current selected food
+// item store, the food cards will subscribe to the global setter helper function
+// then use the use effect with dep as theat state to do an effect of pan to when that state changes
 function FlyTo() {
     const map = useMap();
     const selectedItem = currentSelectedStore((state) => state.selectedFoodItem);
