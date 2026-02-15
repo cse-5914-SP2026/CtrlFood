@@ -1,5 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { currentSelectedStore } from '@/store/store';
+import { useEffect } from 'react';
 
 /*
     Notes of leaflet react port:
@@ -40,13 +42,33 @@ import 'leaflet/dist/leaflet.css';
 
 */
 
+function FlyTo() {
+    const map = useMap();
+    const selectedItem = currentSelectedStore((state) => state.selectedFoodItem);
+
+    useEffect(() => {
+        if (selectedItem) {
+            const { lat, lng } = selectedItem.coordinates
+            console.log("DEBUG")
+            map.panTo([lat, lng]);
+        }
+    }, [selectedItem]);
+
+    return null;
+}
+
 function MapWrapper() {
+
     return (
         <MapContainer center={[40.0017, -83.0160]} zoom={15} zoomControl={false} className="h-full w-full">
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+
+            <FlyTo /> {/* For leaflet react shi to work apparently useMap must be called in a comp that is a child of the MapContainer thus need a UI less comp here*/}
+
+            {/* FlyTo func componetn child place*/}
 
             {/* 12th Avenue Bread Company */}
             <Marker position={[39.99648, -83.0128899]}>

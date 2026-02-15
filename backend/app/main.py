@@ -9,6 +9,7 @@ from typing import Any, List, Dict
 import requests
 import json
 import os
+import random
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
@@ -99,6 +100,10 @@ def test_insert():
                         "date": day.date,
                         "description": menu_item.food.description or "",
                         "location": NUTRISLICE_URLS[i].split("/")[7],
+                        "coordinates": {
+                            "lat": round(random.uniform(-90, 90), 6),
+                            "lng": round(random.uniform(-180, 180), 6),
+                        },
                     })
 
         lines = []

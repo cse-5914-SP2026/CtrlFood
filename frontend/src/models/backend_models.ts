@@ -3,5 +3,9 @@ export interface FoodItem {
     description: string,
     date: string,
     location: string,
+    coordinates: {
+        lat: number,
+        lng: number,
+    }
     address: string,
 }

@@ -1,20 +1,23 @@
 import React from 'react'
 import { Card, CardContent } from './ui/card'
 import type { FoodItem } from '@/models/backend_models'
+import { currentSelectedStore } from '@/store/store'
 
 interface Props {
     item: FoodItem,
 };
 
 const FoodCard = ({ item }: Props) => {
+
+    const setCurrentSelectedFoodItem = currentSelectedStore((state) => state.setSelectedFoodItem)
+
     return (
-        <Card className="bg-stone-500 mx-auto w-full max-w-sm">
+        <Card className="bg-stone-500 mx-auto w-full max-w-sm" onClick={() => setCurrentSelectedFoodItem(item)}>
             <CardContent>
                 <div className='flex flex-col'>
                     <p>{item.name}</p>
                     <p>{item.date}</p>
                 </div>
-
             </CardContent>
         </Card>
     )
