@@ -17,11 +17,11 @@ export function DatePicker() {
     const [date, setDate] = React.useState<Date>()
 
     return (
-        <div className="absolute top-5 left-120 z-[1000] p-1 rounded-xl">
+        <div className="absolute top-19.5 left-117 z-[1000] p-1 rounded-xl">
             <Popover>
                 <PopoverTrigger asChild>
                     <Button
-                        variant="default"
+                        variant="outline"
                         size="sm"
                         data-empty={!date}
                         className="data-[empty=true]:text-muted-foreground w-[212px] justify-between text-left font-normal"

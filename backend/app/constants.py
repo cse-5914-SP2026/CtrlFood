@@ -26,3 +26,32 @@ NUTRISLICE_URLS = [
     "https://osu.api.nutrislice.com/menu/api/weeks/school/union-market/menu-type/all-day/2026/02/03/",
     "https://osu.api.nutrislice.com/menu/api/weeks/school/woodys-tavern/menu-type/all-day/2026/02/03/",
 ]
+
+location_coordinates = {
+    "12th-avenue-bread-company": [39.99668, -83.01389],
+    "berry-cafe": [39.9992718, -83.014958],
+    "cafe-carmenton": [40.0059613, -83.0351248],
+    "cfaes-cafe": [40.0054224, -83.0272226],
+    "connecting-grounds": [40.0043306, -83.0133935],
+    "courtside-cafe": [39.9996195, -83.0181668],
+    "crane-cafe": [39.9984393, -83.0102061],
+    "curl-market": [40.0042782, -83.0109501],
+    "espressoh": [39.9978745, -83.0086663],
+    "hamilton-cafe": [40.0017, -83.0160], 
+    "juice-2": [39.9996195, -83.0181668], 
+    "juice-north": [40.004556, -83.0132844],
+    "ksa-cafe": [40.0037013, -83.0167559],
+    "marketplace": [39.9938397, -83.014022], 
+    "marketplace-c-store": [39.9935397, -83.014022],
+    "mirror-lake-eatery": [39.9973692, -83.0144008],
+    "oxleys-to-go": [40.0027256, -83.0174201],
+    "oxleys-by-the-numbers": [40.0027256, -83.0174201],
+    "postle-cafe": [39.9960543, -83.0164153],
+    "sloopys-diner": [39.9976745, -83.0086663],
+    "terra-byte-cafe": [40.0016229, -83.0133167],
+    "the-caffeine-element": [39.9947705, -83.017084], 
+    "the-campus-grind-mcpherson": [40.0025136, -83.0123396],
+    "the-coffey-road-cafe-at-vet-med": [40.0009157, -83.0277092],
+    "union-market": [39.9973745, -83.0087563],
+    "woodys-tavern": [39.9978545, -83.0089663]
+}
