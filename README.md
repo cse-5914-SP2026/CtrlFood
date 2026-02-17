@@ -52,4 +52,5 @@ curl -X GET "http://localhost:9200/foods/\_search?pretty" \
 
 ## To Search Through UI
 
+cd frontend
 npm run dev
