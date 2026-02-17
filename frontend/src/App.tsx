@@ -1,40 +1,28 @@
-import "./App.css";
-import { SearchBox } from "./components/SearchBox";
 import * as React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import { TopNav } from "./components/TopNav";
+import MainPage from "./pages/MainPage";
+import ProfilePage from "./pages/ProfilePage";
+import SpinWheelPage from "./pages/SpinWheelPage";
 
 function App() {
-  const [foodResult, setFoodResult] = React.useState<string | null>(null);
-
-  const handleSearch = async (q: string) => {
-    const res = await fetch("http://localhost:8000/query", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: q }),
-    });
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("API error:", text);
-      return;
-    }
-    const data = await res.json();
-    console.log("ES results:", data);
-    setFoodResult(
-      data ? ` Found: ${JSON.stringify(data)}` : " No results found.",
-    );
-  };
-
   return (
-    <div className="w-screen min-h-screen bg-background flex items-center justify-center px-6">
-      <div className="w-full flex flex-col items-center gap-6">
-        <h1 className="text-4xl font-semibold tracking-tight text-center">
-          Ctrl + F(ood)
-        </h1>
+    <BrowserRouter>
+      <div className="min-h-screen bg-background">
+        <TopNav />
 
-        <SearchBox onSearch={handleSearch} />
-        {foodResult}
+        {/* content area */}
+        <main className="mx-auto w-full max-w-5xl px-6 py-8">
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/spin" element={<SpinWheelPage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
 

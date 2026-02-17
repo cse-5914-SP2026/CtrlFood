@@ -30,5 +30,26 @@ Local instance of Elastic search has a persistent volume managed by Docker so if
 FastAPI built in docs at: http://localhost:8000/docs
 Kibana docs for elasticsearch at: http://localhost:5601
 
+## To Start Docker Env
 
+docker compose up --build -d
 
+## To Get Data
+
+docker compose exec api python elastic_search/insert_data.py
+
+## To Search Through Terminal
+
+curl -X GET "http://localhost:9200/foods/\_search?pretty" \  
+ -H "Content-Type: application/json" \
+ -d '{
+"query": {
+"match": {
+"name": "waffle"
+}
+}
+}'
+
+## To Search Through UI
+
+npm run dev
