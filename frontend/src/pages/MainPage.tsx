@@ -40,25 +40,16 @@
 //   );
 // }
 
-import { SearchBox } from "../components/SearchBox";
 import * as React from "react";
-import { ThemeProvider } from "../components/theme-provider";
 import 'leaflet/dist/leaflet.css';
 import OverlayWrapper from "../components/OverlayWrapper";
 import MapWrapper from "../components/MapWrapper";
 
-function App() {
-
+export default function MainPage() {
   return (
-    <ThemeProvider>
-      <div className="relative h-screen w-screen">
-
-        <MapWrapper></MapWrapper>
-        <OverlayWrapper></OverlayWrapper>
-
-      </div>
-    </ThemeProvider>
+    <div className="relative h-full w-full">
+      <MapWrapper />
+      <OverlayWrapper />
+    </div>
   );
 }
-
-export default App;

@@ -12,7 +12,7 @@ import {
 
 export function CategoryIslands() {
     return (
-        <div className="absolute top-5 left-180 z-[1000] flex items-center py-2">
+        <div className="absolute top-17 left-180 z-[1000] flex items-center py-2">
 
             <div className="flex gap-2 px-1">
                 <Button

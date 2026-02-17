@@ -9,10 +9,11 @@ from typing import Any, List, Dict
 import requests
 import json
 import os
+import random
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
-from .constants import NUTRISLICE_URLS, ADDRESSES
+from .constants import NUTRISLICE_URLS, location_coordinates
 from .utility import make_es_search
 
 from datetime import date
@@ -52,11 +53,16 @@ def test_query(user_query: UserQuery):
     q = make_es_search(user_query)
 
     try:
-        resp = es_client.search(index="foods", body=q)
+        resp = es_client.search(index="foods", size=200, body=q)
     except TransportError as e:
         raise HTTPException(status_code=500, detail=f"Es client error when searching: {e}")
 
-    return resp["hits"]["hits"]
+    print(resp)
+
+    hits = resp["hits"]["hits"]
+
+    temp_cleaned = [ hit["_source"] for hit in hits]
+    return temp_cleaned
 
 @app.get("/insert")
 def test_insert():
@@ -91,13 +97,16 @@ def test_insert():
         for day in root.days or []:
             for menu_item in day.menu_items or []:
                 if menu_item.food and menu_item.food.name: # if there is no name assume it is not a food item dont include
+                    temp_coor = location_coordinates.get(NUTRISLICE_URLS[i].split("/")[7], [40.0017, -83.0160])
                     food_list.append({
                         "name": menu_item.food.name,
                         "date": day.date,
-                        "description": menu_item.food.description or "",
+                        "description": menu_item.food.description or "No Description",
                         "location": NUTRISLICE_URLS[i].split("/")[7],
-                        "address": ADDRESSES[i],
-
+                        "coordinates": {
+                            "lat": temp_coor[0],
+                            "lng": temp_coor[1],
+                        },
                     })
 
         lines = []
@@ -118,6 +127,7 @@ def test_insert():
             raise HTTPException(status_code=500, detail=f"Elasticsearch error: {e}")
         
     return {"message": "success"}
+
 
 
 

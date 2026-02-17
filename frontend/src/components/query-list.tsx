@@ -51,17 +51,19 @@ const QueryList = () => {
     const currentQueryList = queryStore((state) => state.queryList)
 
     return (
-        <div className="absolute top-20 bottom-4 left-20 z-[1000] w-full max-w-sm p-1">
-            <Card className="flex flex-col w-full h-full bg-white border-transparent ">
-                <CardContent className="flex-1 w-full h-full p-2">
-                    <List
-                        rowComponent={RowComponent}
-                        rowCount={currentQueryList.length}
-                        rowHeight={110}
-                        rowProps={{ items: currentQueryList }}
-                    />
-                </CardContent>
-            </Card>
+        <div className="absolute top-37 bottom-4 left-20 z-[1000] w-full max-w-sm p-1">
+            {currentQueryList.length !== 0 && (
+                <Card className="flex flex-col w-full h-full bg-white border-transparent ">
+                    <CardContent className="flex-1 w-full h-full p-2">
+                        <List
+                            rowComponent={RowComponent}
+                            rowCount={currentQueryList.length}
+                            rowHeight={110}
+                            rowProps={{ items: currentQueryList }}
+                        />
+                    </CardContent>
+                </Card>
+            )}
         </div>
     )
 }

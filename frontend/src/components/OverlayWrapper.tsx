@@ -37,7 +37,7 @@ const OverlayWrapper = () => {
         <>
             <CategoryIslands></CategoryIslands>
             <SearchBar onSearch={handleSearch}></SearchBar>
-            <LeftBar></LeftBar>
+            {/* <LeftBar></LeftBar> */}
             <DatePicker></DatePicker>
             <QueryList></QueryList>
         </>

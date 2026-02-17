@@ -203,7 +203,7 @@ export default function SpinWheelPage() {
   }, []);
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-6 py-10">
+    <div className="w-full max-w-5xl mx-auto px-6 py-20">
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-semibold">Food Spin Wheel</h2>
         <p className="text-muted-foreground">
