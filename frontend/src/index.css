@@ -61,6 +61,12 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground m-0 p-0 overflow-hidden;
   }
+}
+
+html,
+#root {
+  @apply h-full w-full m-0 p-0;
+}
 }
