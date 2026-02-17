@@ -20,6 +20,7 @@ function App() {
             <Route path="/spin" element={<SpinWheelPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+
         </main>
       </div>
     </BrowserRouter>

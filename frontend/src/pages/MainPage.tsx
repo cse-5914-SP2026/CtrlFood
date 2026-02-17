@@ -1,28 +1,37 @@
 import * as React from "react";
 import { SearchBox } from "../components/SearchBox";
+import { FoodResultCard } from "@/components/FoodResultCard";
 
 export default function MainPage() {
-  const [foodResult, setFoodResult] = React.useState<string | null>(null);
+  const [foodResult, setFoodResult] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   const handleSearch = async (q: string) => {
-    const res = await fetch("http://localhost:8000/query", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: q }),
-    });
+    setIsLoading(true)
+    try {
 
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("API error:", text);
-      setFoodResult(" API error. Check console.");
-      return;
+      const res = await fetch("http://localhost:8000/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: q }),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("API error:", text);
+        setFoodResult(" API error. Check console.");
+        return;
+      }
+
+      const data = await res.json();
+      console.log("ES results:", data);
+      setFoodResult(
+        data ? `Found: ${JSON.stringify(data)}` : "No results found.",
+      );
+
+    } catch (e) {
+      console.log(e)
     }
-
-    const data = await res.json();
-    console.log("ES results:", data);
-    setFoodResult(
-      data ? `Found: ${JSON.stringify(data)}` : "No results found.",
-    );
   };
 
   return (
@@ -33,6 +42,11 @@ export default function MainPage() {
 
       <div className="w-full max-w-3xl">
         <SearchBox onSearch={handleSearch} />
+
+        {!isLoading && foodResult && (
+          <FoodResultCard results={foodResult}></FoodResultCard>
+        )}
+
       </div>
 
       {foodResult ? <pre className="...">{foodResult}</pre> : null}
