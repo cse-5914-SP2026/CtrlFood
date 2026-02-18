@@ -12,8 +12,10 @@ import os
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
-from .constants import NUTRISLICE_URLS
+from .constants import NUTRISLICE_URLS, ADDRESSES
 from .utility import make_es_search
+
+from datetime import date
 
 # ES docker url should be injected to the api container's env var
 ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL", "http://elastic_search:9200")
@@ -47,7 +49,7 @@ def test_query(user_query: UserQuery):
     which I don't know how well that will work in high loads
 
     '''
-    q = make_es_search(user_query.query)
+    q = make_es_search(user_query.query, user_query.date, user_query.location)
 
     try:
         resp = es_client.search(index="foods", body=q)
@@ -94,6 +96,8 @@ def test_insert():
                         "date": day.date,
                         "description": menu_item.food.description or "",
                         "location": NUTRISLICE_URLS[i].split("/")[7],
+                        "address": ADDRESSES[i],
+
                     })
 
         lines = []

@@ -30,6 +30,7 @@ Local instance of Elastic search has a persistent volume managed by Docker so if
 FastAPI built in docs at: http://localhost:8000/docs
 Kibana docs for elasticsearch at: http://localhost:5601
 
+Remake data: `curl -X DELETE "localhost:9200/foods" && curl "localhost:8000/insert"`
 ## To Start Docker Env
 
 docker compose up --build -d
