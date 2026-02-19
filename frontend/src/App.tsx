@@ -13,7 +13,6 @@ function App() {
         <div className="relative h-screen w-screen overflow-hidden bg-background">
           <TopNav />
 
-          {/* Let main take the full height and width without padding constraints */}
           <main className="h-full w-full">
             <Routes>
               <Route path="/" element={<MainPage />} />

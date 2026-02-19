@@ -127,7 +127,3 @@ def test_insert():
             raise HTTPException(status_code=500, detail=f"Elasticsearch error: {e}")
         
     return {"message": "success"}
-
-
-
-
