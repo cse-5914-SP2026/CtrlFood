@@ -1,13 +1,7 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
 
-const NavItem = ({
-  to,
-  children,
-}: {
-  to: string;
-  children: React.ReactNode;
-}) => {
+const NavItem = ({ to, children }: { to: string; children: React.ReactNode }) => {
   return (
     <NavLink
       to={to}
@@ -28,8 +22,8 @@ const NavItem = ({
 
 export function TopNav() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto w-full max-w-5xl px-6 h-14 flex items-center justify-between">
+    <header className="absolute top-0 left-0 z-[1001] w-full border-b bg-background/80 backdrop-blur">
+      <div className="mx-auto w-full px-6 h-14 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="font-semibold tracking-tight">Ctrl + F(ood)</div>
         </div>
