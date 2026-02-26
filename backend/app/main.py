@@ -11,6 +11,7 @@ import json
 import os
 import random
 
+from datetime import date
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
 from .constants import NUTRISLICE_URLS, location_coordinates
@@ -48,7 +49,7 @@ def test_query(user_query: UserQuery):
     which I don't know how well that will work in high loads
 
     '''
-    q = make_es_search(user_query.query)
+    q = make_es_search(user_query.query, user_query.date)
 
     try:
         resp = es_client.search(index="foods", size=200, body=q)
