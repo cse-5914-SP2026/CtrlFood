@@ -13,8 +13,9 @@ import random
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
-from .constants import NUTRISLICE_URLS, location_coordinates
+from .constants import ADDRESSES, NUTRISLICE_URLS, location_coordinates
 from .utility import make_es_search
+
 
 from datetime import date
 
@@ -107,6 +108,7 @@ def test_insert():
                             "lat": temp_coor[0],
                             "lng": temp_coor[1],
                         },
+                        "address": ADDRESSES[i]
                     })
 
         lines = []
