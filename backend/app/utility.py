@@ -1,15 +1,17 @@
+from .models.models import UserQuery
+
 def get_distance(loc1, loc2):
     # TODO: calc distance between user loc and restaurant loc 
     # and then tiebreak by distance if the score is the same
     # by passing in the distance to the es query?
     pass
 
-def make_es_search(query: str, date: str = None):
+def make_es_search(user_query: str, date: str = None):
     must = [
         {
             "match": {
                 "name": {
-                    "query": query,
+                    "query": user_query.query,
                     "fuzziness": "AUTO"
                 }
             }
@@ -17,9 +19,9 @@ def make_es_search(query: str, date: str = None):
     ]
     # filter -> satisfy this but don't score it 
     filter_clauses = []
-    if date:
+    if user_query.date:
         # term: exact match, no fuzziness
-        filter_clauses.append({"term": {"date": date}})
+        filter_clauses.append({"term": {"date": user_query.date}})
 
     return {
         "query": {

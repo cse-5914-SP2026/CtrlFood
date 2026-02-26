@@ -49,7 +49,7 @@ def test_query(user_query: UserQuery):
     which I don't know how well that will work in high loads
 
     '''
-    q = make_es_search(user_query.query, user_query.date, user_query.location)
+    q = make_es_search(user_query)
 
     try:
         resp = es_client.search(index="foods", body=q)
