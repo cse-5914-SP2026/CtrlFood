@@ -54,11 +54,9 @@ def test_query(user_query: UserQuery):
     which I don't know how well that will work in high loads
 
     '''
-    q = make_es_search(user_query)
-
+    q = make_es_search(user_query)      
     try:
-        resp = es_client.search(index="foods", size=200, body=q)
-        resp = es_client.search(index="foods", size=200, body=q)
+        resp = es_client.search(index="foods", query=q["query"], size=200)
     except TransportError as e:
         raise HTTPException(status_code=500, detail=f"Es client error when searching: {e}")
 
