@@ -1,7 +1,7 @@
 import requests
 import json
 
-api_url = "https://osu.api.nutrislice.com/menu/api/weeks/school/12th-avenue-bread-company/menu-type/all-day/2026/02/03/"
+api_url = "https://osu.api.nutrislice.com/menu/api/weeks/school/12th-avenue-bread-company/menu-type/all-day/2026/02/12/"
 response = requests.get(api_url)
 
 if response.status_code != 200:

@@ -11,12 +11,16 @@ import requests
 import json
 import os
 import random
+import random
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
-from .constants import location_coordinates
+from .constants import ADDRESSES, location_coordinates
 from .nutrislice_urls import nutrislice_urls_today
 from .utility import make_es_search
+
+
+from datetime import date
 
 # ES docker url should be injected to the api container's env var
 ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL", "http://elastic_search:9200")
@@ -50,9 +54,10 @@ def test_query(user_query: UserQuery):
     which I don't know how well that will work in high loads
 
     '''
-    q = make_es_search(user_query.query)
+    q = make_es_search(user_query)
 
     try:
+        resp = es_client.search(index="foods", size=200, body=q)
         resp = es_client.search(index="foods", size=200, body=q)
     except TransportError as e:
         raise HTTPException(status_code=500, detail=f"Es client error when searching: {e}")
@@ -122,12 +127,13 @@ def test_insert():
                     food_list.append({
                         "name": menu_item.food.name,
                         "date": day.date,
-                        "description": menu_item.food.description or "No Description",
+                        "description": menu_item.food.description or "",
                         "location": nutrislice_urls[i].split("/")[7],
                         "coordinates": {
                             "lat": temp_coor[0],
                             "lng": temp_coor[1],
                         },
+                        "address": ADDRESSES[i]
                     })
 
         lines = []
@@ -148,7 +154,3 @@ def test_insert():
             raise HTTPException(status_code=500, detail=f"Elasticsearch error: {e}")
         
     return {"message": "success"}
-
-
-
-
