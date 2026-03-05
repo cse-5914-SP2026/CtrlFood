@@ -72,6 +72,7 @@ export function CategoryIslands() {
                                 key={option}
                                 checked={selected.includes(option)}
                                 onCheckedChange={() => toggle(option)}
+                                onSelect={e => e.preventDefault()}
                             >
                                 {option}
                             </DropdownMenuCheckboxItem>
