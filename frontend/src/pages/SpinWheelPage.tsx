@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-const OPTIONS = [
+const DEFAULT_OPTIONS = [
   "waffle",
   "yogurt",
   "sandwich",
@@ -14,6 +14,26 @@ function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
+const SLICE_COLORS = [
+  "#FDE68A", // amber-200
+  "#BFDBFE", // blue-200
+  "#BBF7D0", // green-200
+  "#FBCFE8", // pink-200
+  "#DDD6FE", // purple-200
+  "#FED7AA", // orange-200
+  "#A7F3D0", // teal-200
+  "#C7D2FE", // indigo-200
+];
+
+function pickSliceColor(i: number) {
+  return SLICE_COLORS[i % SLICE_COLORS.length];
+}
+
+function truncateLabel(s: string, max = 16) {
+  const t = s.trim();
+  return t.length > max ? t.slice(0, max - 1) + "…" : t;
+}
+
 export default function SpinWheelPage() {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const size = 360; // wheel diameter in px
@@ -21,6 +41,12 @@ export default function SpinWheelPage() {
 
   const [isSpinning, setIsSpinning] = React.useState(false);
   const [picked, setPicked] = React.useState<string | null>(null);
+
+  // Dynamic options (start from defaults)
+  const [options, setOptions] = React.useState<string[]>(() => [
+    ...DEFAULT_OPTIONS,
+  ]);
+  const [newOption, setNewOption] = React.useState("");
 
   // We keep rotation in degrees (0 at top, clockwise positive)
   const rotationRef = React.useRef(0); // current rotation degrees
@@ -47,36 +73,59 @@ export default function SpinWheelPage() {
     const cx = radius;
     const cy = radius;
 
-    // background circle shadow
+    // soft background shadow
     ctx.save();
     ctx.translate(cx, cy);
-
-    // subtle shadow
     ctx.beginPath();
     ctx.arc(0, 0, radius - 2, 0, Math.PI * 2);
     ctx.closePath();
-    ctx.fillStyle = "rgba(0,0,0,0.04)";
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
     ctx.fill();
     ctx.restore();
+
+    if (options.length === 0) {
+      // draw placeholder wheel
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.beginPath();
+      ctx.arc(0, 0, radius - 10, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.02)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(0,0,0,0.10)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(0,0,0,0.45)";
+      ctx.font =
+        "600 14px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Add some options →", 0, 0);
+      ctx.restore();
+      return;
+    }
 
     // wheel
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate((rotationRef.current * Math.PI) / 180);
 
-    const n = OPTIONS.length;
+    const n = options.length;
     const arc = (2 * Math.PI) / n;
+
+    const wheelR = radius - 10;
+    const labelR = wheelR * 0.72; // labels closer to center
 
     for (let i = 0; i < n; i++) {
       const start = -Math.PI / 2 + i * arc; // start at top
       const end = start + arc;
 
-      // alternating slice color (neutral)
+      // slice fill
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      ctx.arc(0, 0, radius - 10, start, end);
+      ctx.arc(0, 0, wheelR, start, end);
       ctx.closePath();
-      ctx.fillStyle = i % 2 === 0 ? "rgba(0,0,0,0.06)" : "rgba(0,0,0,0.02)";
+      ctx.fillStyle = pickSliceColor(i);
       ctx.fill();
 
       // slice border
@@ -84,29 +133,57 @@ export default function SpinWheelPage() {
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // text
-      const label = OPTIONS[i];
+      // label
+      const label = truncateLabel(options[i], 16);
       const mid = (start + end) / 2;
 
       ctx.save();
       ctx.rotate(mid);
-      ctx.textAlign = "right";
-      ctx.fillStyle = "rgba(0,0,0,0.80)";
+
+      ctx.fillStyle = "rgba(17, 24, 39, 0.92)";
       ctx.font =
-        "600 16px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
-      // place text near edge
-      ctx.translate(radius - 22, 6);
-      ctx.rotate(Math.PI / 2); // make it readable
+        "800 14px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      ctx.translate(labelR, 0);
+
+      // keep text readable (flip on left side)
+      const angleDeg = (mid * 180) / Math.PI;
+      if (angleDeg > 90 && angleDeg < 270) {
+        ctx.rotate(Math.PI);
+      }
+
+      // subtle glow to improve readability
+      ctx.shadowColor = "rgba(255,255,255,0.65)";
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+
       ctx.fillText(label, 0, 0);
       ctx.restore();
     }
 
+    // outer ring
+    ctx.beginPath();
+    ctx.arc(0, 0, wheelR, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(0,0,0,0.10)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // inner ring
+    ctx.beginPath();
+    ctx.arc(0, 0, wheelR * 0.22, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(0,0,0,0.08)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
     // center hub
     ctx.beginPath();
     ctx.arc(0, 0, 46, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255,255,255,0.95)";
+    ctx.fillStyle = "rgba(255,255,255,0.96)";
     ctx.fill();
-    ctx.strokeStyle = "rgba(0,0,0,0.12)";
+    ctx.strokeStyle = "rgba(0,0,0,0.10)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -116,8 +193,9 @@ export default function SpinWheelPage() {
     ctx.fillStyle = "rgba(0,0,0,0.25)";
     ctx.fill();
 
-    ctx.restore();
-  }, [radius, size]);
+    ctx.restore(); // wheel rotate
+    ctx.restore(); // wheel block
+  }, [radius, size, options]);
 
   React.useEffect(() => {
     draw();
@@ -127,52 +205,42 @@ export default function SpinWheelPage() {
   }, [draw]);
 
   const computePicked = React.useCallback(() => {
-    // Pointer is fixed at top (-90deg). Our slices start at top.
-    // We need the angle where the pointer hits the wheel after rotation.
-    const n = OPTIONS.length;
+    if (options.length === 0) return null;
+
+    const n = options.length;
     const arcDeg = 360 / n;
 
-    // rotationRef is clockwise degrees applied to wheel.
-    // If wheel rotates clockwise, the slice under the top pointer moves from earlier indices to later.
-    // Effective angle at pointer in wheel's local coordinates is (360 - (rotation % 360)).
     const rot = ((rotationRef.current % 360) + 360) % 360;
     const local = (360 - rot) % 360;
 
-    // local=0 means slice 0 is under pointer.
     const idx = Math.floor(local / arcDeg);
     const safeIdx = clamp(idx, 0, n - 1);
 
-    return { idx: safeIdx, value: OPTIONS[safeIdx] };
-  }, []);
+    return { idx: safeIdx, value: options[safeIdx] };
+  }, [options]);
 
   const spin = React.useCallback(() => {
-    if (isSpinning) return;
+    if (isSpinning || options.length === 0) return;
 
     setIsSpinning(true);
     setPicked(null);
 
-    // physics-ish: pick a target rotation with multiple full turns + random offset
-    const n = OPTIONS.length;
+    const n = options.length;
     const arcDeg = 360 / n;
 
-    // choose winning index randomly
     const winIdx = Math.floor(Math.random() * n);
 
-    // We want local angle at pointer to fall within [winIdx*arc, (winIdx+1)*arc)
-    // local = (360 - rot) % 360
-    // so choose local somewhere in that slice, then derive rot.
-    const pad = arcDeg * 0.12; // avoid borders
+    const pad = arcDeg * 0.12;
     const localTarget =
       winIdx * arcDeg + pad + Math.random() * (arcDeg - 2 * pad);
 
-    // rotTarget = 360 - localTarget (mod 360)
     const rotWithin360 = (360 - localTarget) % 360;
 
     const fullTurns = 5 + Math.floor(Math.random() * 4); // 5-8 turns
     const start = rotationRef.current;
     const target = start + fullTurns * 360 + rotWithin360;
 
-    const durationMs = 2800; // nice duration
+    const durationMs = 2800;
     const t0 = performance.now();
 
     const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -188,13 +256,13 @@ export default function SpinWheelPage() {
       } else {
         animRef.current = null;
         const result = computePicked();
-        setPicked(result.value);
+        if (result) setPicked(result.value);
         setIsSpinning(false);
       }
     };
 
     animRef.current = requestAnimationFrame(step);
-  }, [computePicked, draw, isSpinning]);
+  }, [computePicked, draw, isSpinning, options.length]);
 
   React.useEffect(() => {
     return () => {
@@ -202,12 +270,55 @@ export default function SpinWheelPage() {
     };
   }, []);
 
+  // --- UI helpers for options ---
+  const handleAddOption = () => {
+    const value = newOption.trim();
+    if (!value) return;
+
+    // normalize: keep user input but avoid duplicates ignoring case
+    const lower = value.toLowerCase();
+    const exists = options.some((o) => o.toLowerCase() === lower);
+    if (exists) {
+      setNewOption("");
+      return;
+    }
+
+    setOptions((prev) => [...prev, value]);
+    setNewOption("");
+  };
+
+  const handleRemoveOption = (value: string) => {
+    setOptions((prev) => prev.filter((o) => o !== value));
+    setPicked((prev) => (prev === value ? null : prev));
+  };
+
+  const handleResetDefaults = () => {
+    setOptions([...DEFAULT_OPTIONS]);
+    setPicked(null);
+    rotationRef.current = 0;
+    draw();
+  };
+
+  const handleClearAll = () => {
+    setOptions([]);
+    setPicked(null);
+    rotationRef.current = 0;
+    draw();
+  };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddOption();
+    }
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto px-6 py-20">
       <div className="flex flex-col gap-2">
         <h2 className="text-2xl font-semibold">Food Spin Wheel</h2>
         <p className="text-muted-foreground">
-          Click Spin and let the wheel decide.
+          Add your options, then click Spin and let the wheel decide.
         </p>
       </div>
 
@@ -215,8 +326,8 @@ export default function SpinWheelPage() {
         {/* Wheel */}
         <div className="relative w-[360px] h-[360px] mx-auto md:mx-0">
           {/* Pointer */}
-          <div className="absolute left-1/2 top-[-6px] -translate-x-1/2 z-10">
-            <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-b-[18px] border-l-transparent border-r-transparent border-b-foreground/80" />
+          <div className="absolute left-1/2 top-[-8px] -translate-x-1/2 z-10">
+            <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-b-[18px] border-l-transparent border-r-transparent border-b-foreground/90 drop-shadow-sm" />
           </div>
 
           <canvas
@@ -228,39 +339,111 @@ export default function SpinWheelPage() {
           {/* Center Spin button overlay */}
           <button
             onClick={spin}
-            disabled={isSpinning}
+            disabled={isSpinning || options.length === 0}
             className={cn(
               "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-              "rounded-full border bg-background px-5 py-3 text-sm font-medium shadow-sm",
+              "rounded-full border bg-background px-6 py-3 text-sm font-semibold shadow-sm",
               "hover:bg-muted/50 disabled:opacity-60 disabled:cursor-not-allowed",
             )}
           >
-            {isSpinning ? "Spinning..." : "Spin"}
+            {options.length === 0
+              ? "Add options"
+              : isSpinning
+                ? "Spinning..."
+                : "Spin"}
           </button>
         </div>
 
-        {/* Result / Legend */}
-        <div className="rounded-lg border p-6">
-          <div className="text-sm text-muted-foreground">Options</div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {OPTIONS.map((o) => (
-              <span
-                key={o}
-                className="rounded-full border px-3 py-1 text-sm bg-muted/30"
+        {/* Controls / Result */}
+        <div className="rounded-lg border p-6 space-y-6">
+          {/* Add option */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-3">
+              <div className="text-sm font-medium">Options</div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={handleResetDefaults}
+                  className="rounded-md border px-3 py-1.5 text-xs font-medium bg-background hover:bg-muted/60"
+                >
+                  Reset defaults
+                </button>
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="rounded-md border px-3 py-1.5 text-xs font-medium bg-background hover:bg-muted/60"
+                >
+                  Clear all
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                value={newOption}
+                onChange={(e) => setNewOption(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Add a food (e.g., sushi)"
+                className="flex-1 rounded-md border px-3 py-2 text-sm bg-background"
+              />
+              <button
+                type="button"
+                onClick={handleAddOption}
+                className={cn(
+                  "rounded-md border px-4 py-2 text-sm font-semibold",
+                  "bg-background hover:bg-muted/60",
+                )}
               >
-                {o}
-              </span>
-            ))}
+                Add
+              </button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              Tip: the wheel updates automatically based on how many options you
+              have.
+            </p>
           </div>
 
-          <div className="mt-6">
+          {/* Current options list */}
+          <div className="flex flex-wrap gap-2">
+            {options.length === 0 ? (
+              <span className="text-sm text-muted-foreground">
+                No options yet. Add some above.
+              </span>
+            ) : (
+              options.map((o) => (
+                <span
+                  key={o}
+                  className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm bg-muted/30"
+                  title="Click ✕ to remove"
+                >
+                  {o}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveOption(o)}
+                    className="ml-1 text-xs text-muted-foreground hover:text-foreground"
+                    aria-label={`Remove ${o}`}
+                  >
+                    ✕
+                  </button>
+                </span>
+              ))
+            )}
+          </div>
+
+          {/* Result */}
+          <div>
             {picked ? (
               <div className="text-lg">
                 You got: <span className="font-semibold">{picked}</span>
               </div>
             ) : (
               <div className="text-muted-foreground">
-                {isSpinning ? "Good luck 🍀" : "Click Spin to start."}
+                {isSpinning
+                  ? "Good luck 🍀"
+                  : options.length === 0
+                    ? "Add at least one option to spin."
+                    : "Click Spin to start."}
               </div>
             )}
           </div>
