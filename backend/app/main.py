@@ -18,7 +18,7 @@ from .models.models import UserQuery
 from .constants import ADDRESSES, location_coordinates
 from .nutrislice_urls import nutrislice_urls_today
 from .utility import make_es_search
-
+from .remove_dupes import remove_duplicates
 
 from datetime import date
 
@@ -54,9 +54,10 @@ def test_query(user_query: UserQuery):
     which I don't know how well that will work in high loads
 
     '''
-    q = make_es_search(user_query)      
+    q = make_es_search(user_query)
+
     try:
-        resp = es_client.search(index="foods", query=q["query"], size=200)
+        resp = es_client.search(index="foods", size=200, query=q["query"])
     except TransportError as e:
         raise HTTPException(status_code=500, detail=f"Es client error when searching: {e}")
 
@@ -64,8 +65,19 @@ def test_query(user_query: UserQuery):
 
     hits = resp["hits"]["hits"]
 
-    temp_cleaned = [ hit["_source"] for hit in hits]
-    return temp_cleaned
+    results = []
+
+    for hit in hits:
+        item = hit["_source"]
+        item["score"] = hit["_score"]  # attach similarity score
+        results.append(item)
+
+    # sort by similarity score
+    results.sort(key=lambda x: x["score"], reverse=True)
+    
+    results = remove_duplicates(results)
+
+    return results
 
 @app.get("/insert")
 def test_insert():
