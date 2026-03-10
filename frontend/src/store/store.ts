@@ -11,14 +11,19 @@ interface CurrentSelectedItemStore {
     setSelectedFoodItem: (item: FoodItem) => void;
 }
 
-// so we couldjust do it by state but apparently you can also do it by link like how other websites do it
-// this may need the use of react router tho
-interface userQueryParamStore {
-    selectedDate: string,
-    selectedCategory: string,
-    selectedLocation: string,
-
+interface FilterStore {
+    selectedDate: string | null;
+    selectedLocations: string[];
+    setSelectedDate: (date: string | null) => void;
+    setSelectedLocations: (locations: string[]) => void;
 }
+
+export const filterStore = create<FilterStore>((set) => ({
+    selectedDate: null,
+    selectedLocations: [],
+    setSelectedDate: (date) => set({ selectedDate: date }),
+    setSelectedLocations: (locations) => set({ selectedLocations: locations }),
+}))
 
 export const currentSelectedStore = create<CurrentSelectedItemStore>((set) => ({
     selectedFoodItem: {

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(f''''Total results: {len\\(data\\)}''''\\); [print\\(f''''  date={r[date]} location={r[location]} name={r[name]}''''\\) for r in data[:3]]\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(f''''Date filter results: {len\\(data\\)}''''\\); [print\\(f''''  date={r[\"\"date\"\"]} location={r[\"\"location\"\"]} name={r[\"\"name\"\"]}''''\\) for r in data[:5]]\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(f''''Location filter \\(marketplace\\) results: {len\\(data\\)}''''\\); [print\\(f''''  date={r[\"\"date\"\"]} location={r[\"\"location\"\"]} name={r[\"\"name\"\"]}''''\\) for r in data]\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(f''''Multi-location filter results: {len\\(data\\)}''''\\); [print\\(f''''  date={r[\"\"date\"\"]} location={r[\"\"location\"\"]} name={r[\"\"name\"\"]}''''\\) for r in data]\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(f''''woodys-tavern results: {len\\(data\\)}''''\\); [print\\(f''''  date={r[\"\"date\"\"]} location={r[\"\"location\"\"]} name={r[\"\"name\"\"]}''''\\) for r in data]\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); print\\(f''''Date+location combined results: {len\\(data\\)}''''\\); [print\\(f''''  date={r[\"\"date\"\"]} location={r[\"\"location\"\"]} name={r[\"\"name\"\"]}''''\\) for r in data]\")"
+    ]
+  }
+}

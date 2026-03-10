@@ -4,4 +4,4 @@ from pydantic import BaseModel
 class UserQuery(BaseModel):
     query: str
     date: str | None = None
-    location: str | None = None
+    location: list[str] | None = None

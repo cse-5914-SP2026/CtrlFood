@@ -22,6 +22,9 @@ def make_es_search(user_query: str, date: str = None):
     if user_query.date:
         # term: exact match, no fuzziness
         filter_clauses.append({"term": {"date": user_query.date}})
+    if user_query.location:
+        # location is a text field with a .keyword sub-field for exact matching
+        filter_clauses.append({"terms": {"location.keyword": user_query.location}})
 
     return {
         "query": {
