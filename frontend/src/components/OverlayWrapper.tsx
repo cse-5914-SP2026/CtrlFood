@@ -4,19 +4,25 @@ import { DatePicker } from './date-picker'
 import LeftBar from './left-bar'
 import QueryList from './query-list'
 import { SearchBar } from './SearchBar'
-import { queryStore } from '@/store/store'
+import { queryStore, filterStore } from '@/store/store'
 
 const OverlayWrapper = () => {
 
     const [foodResult, setFoodResult] = React.useState<string | null>(null);
 
     const updateCurrentQueryList = queryStore((state) => state.populateBackendQueryList)
+    const selectedDate = filterStore((state) => state.selectedDate)
+    const selectedLocations = filterStore((state) => state.selectedLocations)
 
     const handleSearch = async (q: string) => {
+        const body: Record<string, unknown> = { query: q }
+        if (selectedDate) body.date = selectedDate
+        if (selectedLocations.length > 0) body.location = selectedLocations
+
         const res = await fetch("http://localhost:8000/query", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ query: q }),
+            body: JSON.stringify(body),
         });
 
         if (!res.ok) {

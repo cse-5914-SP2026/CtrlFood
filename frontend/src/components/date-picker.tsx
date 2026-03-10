@@ -8,13 +8,21 @@ import {
 } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { ChevronDownIcon } from "lucide-react"
+import { filterStore } from "@/store/store"
 
-// Note!!! the calendar compoennt was liek fucked up idk why 
+// Note!!! the calendar compoennt was liek fucked up idk why
 // saw this issue on gh https://github.com/shadcn-ui/ui/issues/1574
 // and c&p a new calendar comp code to calendar comp so that code is now custom FYI
 
 export function DatePicker() {
     const [date, setDate] = React.useState<Date>()
+    const setSelectedDate = filterStore((state) => state.setSelectedDate)
+
+    const handleSelect = (d: Date | undefined) => {
+        setDate(d)
+        // Backend expects ISO date format YYYY-MM-DD (from date.today().isoformat())
+        setSelectedDate(d ? format(d, "yyyy-MM-dd") : null)
+    }
 
     return (
         <div className="absolute top-19.5 left-117 z-[1000] p-1 rounded-xl">
@@ -34,7 +42,7 @@ export function DatePicker() {
                     <Calendar
                         mode="single"
                         selected={date}
-                        onSelect={setDate}
+                        onSelect={handleSelect}
                         defaultMonth={date}
                     />
                 </PopoverContent>

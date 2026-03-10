@@ -1,5 +1,7 @@
 "use client"
 
+"use client"
+
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,13 +11,13 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu"
 import {
-    ArrowLeftIcon,
     ArchiveIcon,
     FlagIcon,
     ClockIcon,
     UtensilsIcon,
     ChevronDownIcon,
 } from "lucide-react"
+import { filterStore } from "@/store/store"
 
 const FOOD_LOCATIONS = ["12th-avenue-bread-company", 
     "berry-cafe", 
@@ -46,11 +48,14 @@ const FOOD_LOCATIONS = ["12th-avenue-bread-company",
 
 export function CategoryIslands() {
     const [selected, setSelected] = React.useState<string[]>([])
+    const setSelectedLocations = filterStore((state) => state.setSelectedLocations)
 
     const toggle = (option: string) => {
-        setSelected(prev =>
-            prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
-        )
+        setSelected(prev => {
+            const next = prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
+            setSelectedLocations(next)
+            return next
+        })
     }
     return (
         <div className="absolute top-17 left-180 z-[1000] flex items-center py-2">
