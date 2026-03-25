@@ -11,9 +11,6 @@ import {
   DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import {
-  ArchiveIcon,
-  FlagIcon,
-  ClockIcon,
   UtensilsIcon,
   ChevronDownIcon,
 } from "lucide-react";

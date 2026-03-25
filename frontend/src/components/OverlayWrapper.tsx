@@ -1,14 +1,14 @@
 import React from "react";
 import { CategoryIslands } from "./category-islands";
 import { DatePicker } from "./date-picker";
-import LeftBar from "./left-bar";
+//import LeftBar from "./left-bar";
 import { LocationBar } from "./LocationBar";
 import QueryList from "./query-list";
 import { SearchBar } from "./SearchBar";
 import { queryStore, filterStore } from "@/store/store";
 
 const OverlayWrapper = () => {
-  const [foodResult, setFoodResult] = React.useState<string | null>(null);
+  // const [foodResult, setFoodResult] = React.useState<string | null>(null);
   const [userLocation, setUserLocation] = React.useState({
     street: "",
     city: "",
@@ -29,7 +29,7 @@ const OverlayWrapper = () => {
         .map((s) => s.trim())
         .filter(Boolean)
         .join(", ");
-        
+
     if (cleanedAddress) {
       body.userLocation = [cleanedAddress]; // ✅ send as list
     }
@@ -50,9 +50,8 @@ const OverlayWrapper = () => {
     }
     const data = await res.json();
     console.log("ES results:", data);
-    setFoodResult(
-      data ? ` Found: ${JSON.stringify(data)}` : " No results found.",
-    );
+
+    // setFoodResult( data ? ` Found: ${JSON.stringify(data)}` : " No results found.", );
 
     updateCurrentQueryList(data); // set new to global store
   };
