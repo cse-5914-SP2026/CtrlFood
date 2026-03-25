@@ -29,6 +29,7 @@ const OverlayWrapper = () => {
         .map((s) => s.trim())
         .filter(Boolean)
         .join(", ");
+        
     if (cleanedAddress) {
       body.userLocation = [cleanedAddress]; // ✅ send as list
     }
