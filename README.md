@@ -31,6 +31,7 @@ FastAPI built in docs at: http://localhost:8000/docs
 Kibana docs for elasticsearch at: http://localhost:5601
 
 Remake data: `curl -X DELETE "localhost:9200/foods" && curl "localhost:8000/insert"`
+
 ## To Start Docker Env
 
 docker compose up --build -d
@@ -53,5 +54,6 @@ curl -X GET "http://localhost:9200/foods/\_search?pretty" \
 
 ## To Search Through UI
 
+uvicorn app.main:app --reload
 cd frontend
 npm run dev

@@ -24,15 +24,60 @@ from .long_lat_con import geocode_address
 
 from datetime import date
 
+from pathlib import Path
+from .schemas.profile import UserProfile
+
 # ES docker url should be injected to the api container's env var
 ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL", "http://elastic_search:9200")
 es_client = Elasticsearch([ELASTICSEARCH_URL])
 
 app = FastAPI()
 
-origins = [  # only localhost links so for development cors doesnt complain
-    "http://localhost:5173",  # believe vite runs on this
-    "http://127.0.0.1:5173",
+PROFILE_PATH = Path(__file__).resolve().parent / "data" / "profile.json"
+
+
+def load_profile() -> UserProfile:
+    if not PROFILE_PATH.exists():
+        PROFILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        default_profile = UserProfile()
+        PROFILE_PATH.write_text(
+            default_profile.model_dump_json(indent=2),
+            encoding="utf-8"
+        )
+        return default_profile
+
+    content = PROFILE_PATH.read_text(encoding="utf-8").strip()
+    if not content:
+        default_profile = UserProfile()
+        PROFILE_PATH.write_text(
+            default_profile.model_dump_json(indent=2),
+            encoding="utf-8"
+        )
+        return default_profile
+
+    return UserProfile.model_validate_json(content)
+
+
+def save_profile_to_file(profile: UserProfile) -> None:
+    PROFILE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    PROFILE_PATH.write_text(
+        profile.model_dump_json(indent=2),
+        encoding="utf-8"
+    )
+
+@app.get("/profile", response_model=UserProfile)
+def get_profile():
+    return load_profile()
+
+
+@app.post("/profile", response_model=UserProfile)
+def save_profile(profile: UserProfile):
+    save_profile_to_file(profile)
+    return profile
+
+origins = [ # only localhost links so for development cors doesnt complain
+    "http://localhost:5173", # believe vite runs on this
+    "http://127.0.0.1:5173" 
 ]
 
 app.add_middleware(
@@ -60,8 +105,8 @@ def test_query(user_query: UserQuery):
     """
 
     lat, lon = None, None
-    if user_query.location:
-        lat, lon = geocode_address(user_query.location)
+    if user_query.userLocation:
+        lat, lon = geocode_address(user_query.userLocation)
 
     q = make_es_search(user_query, date=user_query.date, lat=lat, lon=lon)
 

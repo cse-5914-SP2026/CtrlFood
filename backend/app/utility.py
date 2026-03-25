@@ -51,6 +51,9 @@ def make_es_search(
 
     if user_query.date:
         filter_clauses.append({"term": {"date": user_query.date}})
+    if user_query.location:
+        # location is a text field with a .keyword sub-field for exact matching
+        filter_clauses.append({"terms": {"location.keyword": user_query.location}})
 
     es_query = {"query": {"bool": {"must": must, "filter": filter_clauses}}}
 
