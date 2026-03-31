@@ -1,6 +1,6 @@
-import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
     Popover,
     PopoverContent,
@@ -25,7 +25,7 @@ export function DatePicker() {
     }
 
     return (
-        <div className="absolute top-19.5 left-117 z-[1000] p-1 rounded-xl">
+        <div className="rounded-xl">
             <Popover>
                 <PopoverTrigger asChild>
                     <Button
