@@ -1,4 +1,5 @@
 import * as React from "react";
+import { supabase } from "../lib/supabase";
 
 type UserProfile = {
   username: string;
@@ -28,15 +29,61 @@ export default function ProfilePage() {
   React.useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/profile");
-        if (!res.ok) {
-          throw new Error("Failed to fetch profile");
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError) throw userError;
+        if (!user) throw new Error("No authenticated user found.");
+
+        const { data: existingProfile, error: fetchError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (fetchError) throw fetchError;
+
+        if (!existingProfile) {
+          const newProfileRow = {
+            id: user.id,
+            username: user.email ?? "",
+            display_name: "",
+            bio: "",
+            favorite_foods: [],
+            favorite_locations: [],
+          };
+
+          const { data: insertedProfile, error: insertError } = await supabase
+            .from("profiles")
+            .insert(newProfileRow)
+            .select()
+            .single();
+
+          if (insertError) throw insertError;
+
+          setProfile({
+            username: insertedProfile.username ?? "",
+            displayName: insertedProfile.display_name ?? "",
+            bio: insertedProfile.bio ?? "",
+            favoriteFoods: insertedProfile.favorite_foods ?? [],
+            favoriteLocations: insertedProfile.favorite_locations ?? [],
+          });
+        } else {
+          setProfile({
+            username: existingProfile.username ?? "",
+            displayName: existingProfile.display_name ?? "",
+            bio: existingProfile.bio ?? "",
+            favoriteFoods: existingProfile.favorite_foods ?? [],
+            favoriteLocations: existingProfile.favorite_locations ?? [],
+          });
         }
-        const data = await res.json();
-        setProfile(data);
       } catch (err) {
         console.error(err);
-        setMessage("Could not load profile.");
+        setMessage(
+          err instanceof Error ? err.message : "Could not load profile."
+        );
       } finally {
         setLoading(false);
       }
@@ -47,7 +94,7 @@ export default function ProfilePage() {
 
   const updateField = <K extends keyof UserProfile>(
     key: K,
-    value: UserProfile[K],
+    value: UserProfile[K]
   ) => {
     setProfile((prev) => ({
       ...prev,
@@ -60,7 +107,7 @@ export default function ProfilePage() {
     if (!value) return;
 
     const exists = profile.favoriteFoods.some(
-      (food) => food.toLowerCase() === value.toLowerCase(),
+      (food) => food.toLowerCase() === value.toLowerCase()
     );
     if (exists) {
       setFoodInput("");
@@ -74,7 +121,7 @@ export default function ProfilePage() {
   const removeFavoriteFood = (foodToRemove: string) => {
     updateField(
       "favoriteFoods",
-      profile.favoriteFoods.filter((food) => food !== foodToRemove),
+      profile.favoriteFoods.filter((food) => food !== foodToRemove)
     );
   };
 
@@ -83,7 +130,7 @@ export default function ProfilePage() {
     if (!value) return;
 
     const exists = profile.favoriteLocations.some(
-      (location) => location.toLowerCase() === value.toLowerCase(),
+      (location) => location.toLowerCase() === value.toLowerCase()
     );
     if (exists) {
       setLocationInput("");
@@ -98,8 +145,8 @@ export default function ProfilePage() {
     updateField(
       "favoriteLocations",
       profile.favoriteLocations.filter(
-        (location) => location !== locationToRemove,
-      ),
+        (location) => location !== locationToRemove
+      )
     );
   };
 
@@ -108,26 +155,44 @@ export default function ProfilePage() {
     setMessage(null);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(profile),
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError) throw userError;
+      if (!user) throw new Error("No authenticated user found.");
+
+      const payload = {
+        id: user.id,
+        username: user.email ?? "",
+        display_name: profile.displayName,
+        bio: profile.bio,
+        favorite_foods: profile.favoriteFoods,
+        favorite_locations: profile.favoriteLocations,
+      };
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .upsert(payload)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setProfile({
+        username: data.username ?? "",
+        displayName: data.display_name ?? "",
+        bio: data.bio ?? "",
+        favoriteFoods: data.favorite_foods ?? [],
+        favoriteLocations: data.favorite_locations ?? [],
       });
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => null);
-        throw new Error(errorData?.detail || "Failed to save profile");
-      }
-
-      const data = await res.json();
-      setProfile(data);
       setMessage("Profile saved.");
     } catch (err) {
       console.error(err);
       setMessage(
-        err instanceof Error ? err.message : "Failed to save profile.",
+        err instanceof Error ? err.message : "Failed to save profile."
       );
     } finally {
       setSaving(false);
@@ -166,7 +231,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="text-sm text-muted-foreground">
-              @{profile.username || "username"}
+              {profile.username || "email@example.com"}
             </div>
 
             <div className="mt-4 text-sm text-muted-foreground">
@@ -220,12 +285,11 @@ export default function ProfilePage() {
         <div className="rounded-xl border p-6 bg-background shadow-sm space-y-6">
           <div className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Username</label>
+              <label className="text-sm font-medium">Email</label>
               <input
                 value={profile.username}
-                onChange={(e) => updateField("username", e.target.value)}
-                placeholder="lemeng"
-                className="mt-1 w-full rounded-md border px-3 py-2 text-sm bg-background"
+                readOnly
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm bg-muted text-muted-foreground"
               />
             </div>
 
