@@ -5,6 +5,7 @@ import { TopNav } from "./components/TopNav";
 import MainPage from "./pages/MainPage";
 import ProfilePage from "./pages/ProfilePage";
 import SpinWheelPage from "./pages/SpinWheelPage";
+import AiSearchPage from "./pages/AiSearchPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/spin" element={<SpinWheelPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/ai-search" element={<AiSearchPage />} />a
             </Routes>
           </main>
         </div>

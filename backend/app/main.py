@@ -1,8 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from datetime import date
-from pydantic import ValidationError
+from pydantic import ValidationError, BaseModel
 from requests.exceptions import JSONDecodeError, RequestException
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import TransportError
@@ -11,13 +10,12 @@ import requests
 import json
 import os
 import random
-import random
 
 
 from .schemas.nutrislice_api import Root, Day, MenuItem, Food
 from .models.models import UserQuery
 from .constants import ADDRESSES, location_coordinates
-from .nutrislice_urls import nutrislice_urls_today
+from .nutrislice_urls import nutrislice_urls_this_and_next_week
 from .utility import make_es_search, sort_by_proximity
 from .remove_dupes import remove_duplicates
 from .long_lat_con import geocode_address
@@ -25,15 +23,44 @@ from .long_lat_con import geocode_address
 from datetime import date
 
 from pathlib import Path
-from .schemas.profile import UserProfile
 
-# ES docker url should be injected to the api container's env var
+from .schemas.profile import UserProfile
+from sentence_transformers import SentenceTransformer
+from .routers.ai_search import router as ai_search_router
+from contextlib import asynccontextmanager
+
+
+# tells ES how to treat the embedding field before any data gets inserted
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    es_client.indices.create(
+        index="foods",
+        body={
+            "mappings": {
+                "properties": {
+                    "embedding": {
+                        "type": "dense_vector",
+                        "dims": 384,
+                        "index": True,
+                        "similarity": "cosine",
+                    }
+                }
+            }
+        },
+        ignore=400,  # already exists = fine
+    )
+    yield
+
+
+_embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+
 ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL", "http://elastic_search:9200")
 es_client = Elasticsearch([ELASTICSEARCH_URL])
 
 app = FastAPI()
 
 PROFILE_PATH = Path(__file__).resolve().parent / "data" / "profile.json"
+app.include_router(ai_search_router)
 
 
 def load_profile() -> UserProfile:
@@ -41,8 +68,7 @@ def load_profile() -> UserProfile:
         PROFILE_PATH.parent.mkdir(parents=True, exist_ok=True)
         default_profile = UserProfile()
         PROFILE_PATH.write_text(
-            default_profile.model_dump_json(indent=2),
-            encoding="utf-8"
+            default_profile.model_dump_json(indent=2), encoding="utf-8"
         )
         return default_profile
 
@@ -50,8 +76,7 @@ def load_profile() -> UserProfile:
     if not content:
         default_profile = UserProfile()
         PROFILE_PATH.write_text(
-            default_profile.model_dump_json(indent=2),
-            encoding="utf-8"
+            default_profile.model_dump_json(indent=2), encoding="utf-8"
         )
         return default_profile
 
@@ -60,10 +85,8 @@ def load_profile() -> UserProfile:
 
 def save_profile_to_file(profile: UserProfile) -> None:
     PROFILE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    PROFILE_PATH.write_text(
-        profile.model_dump_json(indent=2),
-        encoding="utf-8"
-    )
+    PROFILE_PATH.write_text(profile.model_dump_json(indent=2), encoding="utf-8")
+
 
 @app.get("/profile", response_model=UserProfile)
 def get_profile():
@@ -75,9 +98,10 @@ def save_profile(profile: UserProfile):
     save_profile_to_file(profile)
     return profile
 
-origins = [ # only localhost links so for development cors doesnt complain
-    "http://localhost:5173", # believe vite runs on this
-    "http://127.0.0.1:5173" 
+
+origins = [  # only localhost links so for development cors doesnt complain
+    "http://localhost:5173",  # believe vite runs on this
+    "http://127.0.0.1:5173",
 ]
 
 app.add_middleware(
@@ -130,7 +154,7 @@ def test_query(user_query: UserQuery):
 
     if lat and lon:
         results = sort_by_proximity(lat, lon, results)
-    else: # sort by similarity score
+    else:  # sort by similarity score
         results.sort(key=lambda x: x["score"], reverse=True)
 
     results = remove_duplicates(results)
@@ -154,12 +178,12 @@ def test_insert():
 
     es_client.delete_by_query(
         index="foods",
-        body={"query": {"bool": {"must_not": [{"term": {"date": today}}]}}},
+        body={"query": {"range": {"date": {"lt": today}}}},
         refresh=True,
         conflicts="proceed",
     )
 
-    nutrislice_urls = nutrislice_urls_today()
+    nutrislice_urls = nutrislice_urls_this_and_next_week()
 
     for i in range(len(nutrislice_urls)):
 
@@ -186,8 +210,6 @@ def test_insert():
 
         food_list = []
         for day in root.days or []:
-            if day.date != today:
-                continue
             for menu_item in day.menu_items or []:
                 if (
                     menu_item.food and menu_item.food.name
@@ -195,17 +217,19 @@ def test_insert():
                     temp_coor = location_coordinates.get(
                         nutrislice_urls[i].split("/")[7], [40.0017, -83.0160]
                     )
+                    text_to_embed = (
+                        f"{menu_item.food.name} {menu_item.food.description or ''}"
+                    )
+
                     food_list.append(
                         {
                             "name": menu_item.food.name,
                             "date": day.date,
                             "description": menu_item.food.description or "",
                             "location": nutrislice_urls[i].split("/")[7],
-                            "coordinates": {
-                                "lat": temp_coor[0],
-                                "lng": temp_coor[1],
-                            },
+                            "coordinates": {"lat": temp_coor[0], "lng": temp_coor[1]},
                             "address": ADDRESSES[i],
+                            "embedding": _embed_model.encode(text_to_embed).tolist(),
                         }
                     )
 

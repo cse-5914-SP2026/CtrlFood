@@ -1,7 +1,13 @@
 import * as React from "react";
 import { NavLink } from "react-router-dom";
 
-const NavItem = ({ to, children }: { to: string; children: React.ReactNode }) => {
+const NavItem = ({
+  to,
+  children,
+}: {
+  to: string;
+  children: React.ReactNode;
+}) => {
   return (
     <NavLink
       to={to}
@@ -32,6 +38,7 @@ export function TopNav() {
           <NavItem to="/">Home</NavItem>
           <NavItem to="/spin">Spin Wheel</NavItem>
           <NavItem to="/profile">Profile</NavItem>
+          <NavItem to="/ai-search">AI Search</NavItem>
         </nav>
       </div>
     </header>
