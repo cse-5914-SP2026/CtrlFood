@@ -10,16 +10,6 @@ interface FoodResult {
   score: number;
 }
 
-const SUGGESTIONS = [
-  "Asian food",
-  "something spicy",
-  "healthy lunch",
-  "comfort food",
-  "vegetarian",
-  "breakfast",
-  "Italian",
-  "grilled meat",
-];
 
 export default function AiSearchPage() {
   const [query, setQuery] = React.useState("");
@@ -66,7 +56,7 @@ export default function AiSearchPage() {
             AI Food Search
           </h1>
           <p className="text-muted-foreground text-sm">
-            Describe what you're craving. Find the closest match.
+            Describe what you want. Find the closest match.
           </p>
         </div>
 
@@ -75,7 +65,7 @@ export default function AiSearchPage() {
             <input
               className="flex-1 rounded-xl border bg-muted/40 px-4 py-3 text-sm outline-none
                          focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
-              placeholder='e.g. "Asian food", "something warm and filling"…'
+              placeholder='e.g. "Asian food", "breakfast", "vegetarian"…'
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && search()}
@@ -91,22 +81,7 @@ export default function AiSearchPage() {
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {SUGGESTIONS.map((s) => (
-              <button
-                key={s}
-                onClick={() => {
-                  setQuery(s);
-                  search(s);
-                }}
-                disabled={loading}
-                className="rounded-full border px-3 py-1 text-xs text-muted-foreground
-                           hover:text-foreground hover:border-foreground transition-colors disabled:opacity-40"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
+          
         </div>
 
         {error && (
