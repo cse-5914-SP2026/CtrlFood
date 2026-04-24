@@ -73,7 +73,7 @@ const OverlayWrapper = () => {
         <CategoryIslands />
       </div>
       {/* <LeftBar></LeftBar> */}
-      {<QueryList />}
+      <QueryList />
     </>
   );
 };

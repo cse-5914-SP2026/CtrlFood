@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 NUTRISLICE_URLS = [
     "https://osu.api.nutrislice.com/menu/api/weeks/school/12th-avenue-bread-company/menu-type/all-day/",
@@ -29,22 +29,19 @@ NUTRISLICE_URLS = [
     "https://osu.api.nutrislice.com/menu/api/weeks/school/woodys-tavern/menu-type/all-day/",
 ]
 
-def nutrislice_urls_today():
+
+def nutrislice_urls_this_and_next_week() -> list[str]:
+
     today = date.today()
 
-    month = today.month
-    day = today.day
-    year = today.year
+    # monday of current week
+    this_monday = today - timedelta(days=today.weekday())
+    # monday of next week
+    next_monday = this_monday + timedelta(weeks=1)
 
-    nutrislice_urls_today = []
+    urls = []
+    for base_url in NUTRISLICE_URLS:
+        for monday in [this_monday, next_monday]:
+            urls.append(f"{base_url}{monday.year}/{monday.month}/{monday.day}/")
 
-    for url in NUTRISLICE_URLS:
-        nutrislice_urls_today.append(
-            url + str(year) + "/" + str(month) + "/" + str(day) + "/"
-        )
-
-    return nutrislice_urls_today
-
-
-
-
+    return urls

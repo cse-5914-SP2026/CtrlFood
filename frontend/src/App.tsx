@@ -7,6 +7,7 @@ import { supabase } from "./lib/supabase";
 import MainPage from "./pages/MainPage";
 import ProfilePage from "./pages/ProfilePage";
 import SpinWheelPage from "./pages/SpinWheelPage";
+import AiSearchPage from "./pages/AiSearchPage";
 import SignInPage from "./pages/SignInPage";
 
 function ProtectedRoute({
@@ -76,6 +77,7 @@ function App() {
               />
               <Route path="/spin" element={<SpinWheelPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/ai-search" element={<AiSearchPage />} />a
             </Routes>
           </main>
         </div>

@@ -45,6 +45,7 @@ export function TopNav({ session }: { session: any }) {
         <nav className="flex items-center gap-1">
           <NavItem to="/">Home</NavItem>
           <NavItem to="/spin">Spin Wheel</NavItem>
+          <NavItem to="/ai-search">AI Search</NavItem>
 
           {session ? (
             <>

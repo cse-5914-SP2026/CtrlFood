@@ -16,3 +16,4 @@ watchfiles==1.1.1
 requests
 elasticsearch==8.19.3
 geopy>=2.3.0
+sentence-transformers
